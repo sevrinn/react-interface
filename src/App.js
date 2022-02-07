@@ -6,7 +6,7 @@ import AddAppointment from './components/AddAppointment'
 import AppointmentInfo from './components/AppointmentInfo'
 
 function App() {
-  let [appointmentList, setAppoinmentList] = useState([])
+  let [appointmentList, setAppointmentList] = useState([])
   let [query, setQuery] = useState('')
   let [sortBy, setSortBy] = useState('petName')
   let [orderBy, setOrderBy] = useState('asc')
@@ -30,7 +30,7 @@ function App() {
     fetch('./data.json')
       .then((response) => response.json())
       .then((data) => {
-        setAppoinmentList(data)
+        setAppointmentList(data)
       })
   }, [])
 
@@ -43,7 +43,15 @@ function App() {
         <BiCalendar className='inline-block text-red-400 align-top' /> Your
         Appointments
       </h1>
-      <AddAppointment />
+      <AddAppointment
+        onSendAppointment={(myAppointment) =>
+          setAppointmentList([...appointmentList, myAppointment])
+        }
+        lastId={appointmentList.reduce(
+          (max, item) => (Number(item.id) > max ? Number(item.id) : max),
+          0
+        )}
+      />
       <Search
         query={query}
         onQueryChange={(myQuery) => setQuery(myQuery)}
@@ -59,7 +67,7 @@ function App() {
             key={appointment.id}
             appointment={appointment}
             onDeleteAppointment={(appointmentId) =>
-              setAppoinmentList(
+              setAppointmentList(
                 appointmentList.filter(
                   (appointment) => appointment.id !== appointmentId
                 )
